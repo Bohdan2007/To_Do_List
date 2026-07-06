@@ -60,6 +60,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         private final TextView titleView;
         private final TextView contentView;
         private final TextView reminderView;
+        private final TextView deadlineView; // Додано змінну для дедлайну
         private final View editButton;
         private final View deleteButton;
 
@@ -68,6 +69,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
             titleView = itemView.findViewById(R.id.tvTitle);
             contentView = itemView.findViewById(R.id.tvContent);
             reminderView = itemView.findViewById(R.id.tvReminder);
+            deadlineView = itemView.findViewById(R.id.tvDeadline); // Ініціалізація
             editButton = itemView.findViewById(R.id.btnEdit);
             deleteButton = itemView.findViewById(R.id.btnDelete);
         }
@@ -76,12 +78,23 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
             titleView.setText(note.getTitle());
             contentView.setText(note.getContent());
 
+            // 1. Перевірка нагадування
             if (note.isReminderEnabled() && note.getReminderTimeMillis() > 0) {
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", new Locale("uk"));
                 reminderView.setVisibility(View.VISIBLE);
                 reminderView.setText("Нагадування о " + sdf.format(note.getReminderTimeMillis()));
             } else {
                 reminderView.setVisibility(View.GONE);
+            }
+
+            // 2. Перевірка дедлайну
+            if (note.getDeadlineMillis() > 0) {
+                // Для дедлайну зазвичай потрібна і дата, і час
+                SimpleDateFormat deadlineSdf = new SimpleDateFormat("dd.MM.yyyy HH:mm", new Locale("uk"));
+                deadlineView.setVisibility(View.VISIBLE);
+                deadlineView.setText("Дедлайн: " + deadlineSdf.format(note.getDeadlineMillis()));
+            } else {
+                deadlineView.setVisibility(View.GONE);
             }
 
             editButton.setOnClickListener(v -> {
