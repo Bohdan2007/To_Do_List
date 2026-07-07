@@ -40,13 +40,10 @@ public class ReminderScheduler {
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextTrigger, pendingIntent);
                 Log.d(TAG, "Заплановано ТОЧНЕ нагадування (є дозвіл) на " + nextTrigger + " для noteId=" + noteId);
             } else {
-                // Дозволу нема - все одно ставимо неточний будильник, щоб хоч якось спрацювало,
-                // але сповіщення про це потрібно показати користувачу в UI (див. MainActivity).
                 alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextTrigger, pendingIntent);
                 Log.w(TAG, "НЕМАЄ дозволу на точні будильники! Заплановано неточне нагадування для noteId=" + noteId);
             }
         } else {
-            // На Android 11 і нижче setExact працює без додаткового дозволу
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextTrigger, pendingIntent);
             Log.d(TAG, "Заплановано точне нагадування на " + nextTrigger + " для noteId=" + noteId);
         }
@@ -65,7 +62,7 @@ public class ReminderScheduler {
 
     public static boolean canScheduleExactAlarms(Context context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-            return true; // на старіших версіях дозвіл не потрібен
+            return true;
         }
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         return alarmManager != null && alarmManager.canScheduleExactAlarms();
