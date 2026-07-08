@@ -33,7 +33,7 @@ public class BootReceiver extends BroadcastReceiver {
                             note.getTitle(),
                             note.getContent(),
                             note.getReminderTimeMillis(),
-                            note.getDeadlineMillis() // Передаємо дедлайн
+                            note.getDeadlineMillis()
                     );
                 }
             }

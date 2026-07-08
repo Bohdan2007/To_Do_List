@@ -1,6 +1,5 @@
 package com.example.todolist.reminder;
 
-import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -21,7 +20,14 @@ public class ReminderReceiver extends BroadcastReceiver {
         String title = intent.getStringExtra("extra_title");
         String content = intent.getStringExtra("extra_content");
         long deadlineMillis = intent.getLongExtra("extra_deadline", 0);
+        long triggerMillis = intent.getLongExtra("extra_trigger", System.currentTimeMillis());
 
+        showNotification(context, noteId, title, content);
+
+        ReminderScheduler.scheduleNextDay(context, noteId, title, content, triggerMillis, deadlineMillis);
+    }
+
+    private void showNotification(Context context, int noteId, String title, String content) {
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         String channelId = "simple_todo_channel";
 
@@ -45,11 +51,6 @@ public class ReminderReceiver extends BroadcastReceiver {
 
         if (manager != null) {
             manager.notify(noteId, builder.build());
-        }
-
-        if (deadlineMillis == 0 || System.currentTimeMillis() < deadlineMillis) {
-            long nextTriggerTomorrow = System.currentTimeMillis() + AlarmManager.INTERVAL_DAY;
-            ReminderScheduler.scheduleReminder(context, noteId, title, content, nextTriggerTomorrow, deadlineMillis);
         }
     }
 }
